@@ -1,9 +1,11 @@
 import pandas as pd
 import os
 import numpy as np
+from xgboost import XGBClassifier
+
 from utils import (get_period_day, is_high_season, get_min_diff,
                    shuffle_data, get_dummies_features, split_data, get_scale,
-                   train_model, get_prediction, get_top_10_features)
+                   train_model, get_top_10_features)
 
 from typing import Tuple, Union, List
 
@@ -49,12 +51,8 @@ class DelayModel:
             target = data[target_column]
             all_features = data.drop(columns=[target_column])
             features = get_top_10_features(all_features)
-            """result = (features.to_csv('data_preprocessed_without_target.csv', index=False),
-                      target.to_csv('target.csv', index=False)) # luego borrar el to_csv"""
-            
             return features, target
         else:
-            """result = data.to_csv('data_preprocessed.csv', index=False) # luego borrar el to_csv"""
             return data
 
     def fit(
@@ -78,21 +76,22 @@ class DelayModel:
 
         trained_model.save_model('challenge/trained_model/xgboost_model.pkl')
         
+    def load_model(self, model_path: str):
+        # Carga el modelo solo una vez
+        self.model = XGBClassifier()
+        self.model.load_model(model_path)
+
     def predict(
         self,
-        features: pd.DataFrame,
-        model_path: str
+        features: pd.DataFrame
     ) -> List[int]:
         """
         Predict delays for new flights.
 
         Args:
             features (pd.DataFrame): preprocessed data.
-        
+
         Returns:
             (List[int]): predicted targets.
         """
-
-        predictions = get_prediction(model_path, features)
-
-        return predictions
+        return self.model.predict(features).tolist()
