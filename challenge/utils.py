@@ -1,7 +1,6 @@
 from datetime import datetime
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
 from sklearn.utils import shuffle
 import xgboost as xgb
 
@@ -95,15 +94,3 @@ def train_model(x_train, y_train, scale):
     xgb_model.fit(x_train, y_train)
     
     return xgb_model
-
-# Get predictions
-def get_prediction(model_path: str,
-                   features: pd.DataFrame):
-    
-    trained_model = XGBClassifier()
-    trained_model.load_model(model_path)
-    
-    # Realizar predicciones con el modelo
-    model_predictions = trained_model.predict(features)
-    
-    return model_predictions.tolist()
