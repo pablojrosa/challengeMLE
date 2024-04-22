@@ -1,14 +1,18 @@
-# syntax=docker/dockerfile:1.2
-FROM python:latest
-# put you docker configuration here
+# Usar la versión específica de Python como base
+FROM python:3.10-slim
 
-# Set the working directory to /app
-WORKDIR /app
-# Copy the current directory contents into the container at /app
-COPY . /app
-# Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
-# Make port 8080 available to the world outside this container
+ENV PYTHONUNBUFFERED True
+
+# Establecer el directorio de trabajo en el contenedor
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+COPY . ./
+
+# Instalar las dependencias del proyecto
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Esponer el puerto a utilizar
 EXPOSE 8080
-# Command to run the application using Uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8080"]
+
+# Comando para iniciar la aplicación usando Uvicorn con configuración para producción
+CMD ["uvicorn", "challenge.api:app", "--host", "0.0.0.0", "--port", "8080"]

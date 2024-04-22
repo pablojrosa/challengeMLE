@@ -3,7 +3,7 @@ import os
 import numpy as np
 from xgboost import XGBClassifier
 
-from utils import (get_period_day, is_high_season, get_min_diff,
+from challenge.utils import (get_period_day, is_high_season, get_min_diff,
                    shuffle_data, get_dummies_features, split_data, get_scale,
                    train_model, get_top_10_features)
 

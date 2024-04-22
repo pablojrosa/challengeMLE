@@ -3,4 +3,7 @@ README.md
 *.pyc
 *.pyo
 *.pyd
+*.ipynb
 __pycache__
+.pytest_cache
+.data

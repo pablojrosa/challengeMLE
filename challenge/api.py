@@ -1,16 +1,16 @@
 import fastapi
 from fastapi import HTTPException
-from model import DelayModel
+from challenge.model import DelayModel
 from pydantic import BaseModel
 import pandas as pd
 import os
+import uvicorn
 
 app = fastapi.FastAPI()
 delay_model = DelayModel()
 
-# Definir el esquema de solicitud para el endpoint de predicción
 class PredictRequest(BaseModel):
-    features: dict  # Asumiendo que los features vienen en formato diccionario
+    features: dict
 
 @app.get("/health", status_code=200)
 async def get_health() -> dict:
@@ -23,10 +23,11 @@ async def post_predict(request: PredictRequest) -> dict:
     delay_model.load_model(model_path)
 
     try:
-        # Convertir el diccionario de features en un DataFrame
-        features_df = pd.DataFrame([request.features])  # Usa una lista para convertir directamente
-        # Realizar la predicción
+        features_df = pd.DataFrame([request.features])
         prediction = delay_model.predict(features=features_df)
         return {"prediction": prediction}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
